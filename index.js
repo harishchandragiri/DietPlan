@@ -15,7 +15,7 @@ const DB_CONNECTION = async() =>{
     }
 }
 
-// Database connection Execution
+// Database connection Execution execute the database
 DB_CONNECTION().
 then(()=>{
    app.listen(port, ()=>{
