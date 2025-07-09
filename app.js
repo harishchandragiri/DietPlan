@@ -1,27 +1,29 @@
-import express from "express"
-import cors from "cors"
-import cookieParser from "cookie-parser"
-// import { errorHandler } from "./middlewares/error.middleware.js";
+import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
 
-const app = express()
+const app = express();
 
-app.use(cors({
-    origin: process.env.CORS_ORIGIN,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],       //a frontend URL from which request are comming 
-    credentials: true
-}))
-app.use(express.json({limit: "500kb"}))
-app.use(express.urlencoded({extended: true, limit: "500kb"}))
-app.use(cookieParser())
+const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost:5173';
 
+const corsOptions = {
+  origin: corsOrigin,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true,
+};
 
-//routes import
+app.use(cors(corsOptions));
+// app.options('*', cors(corsOptions));
+
+app.use(express.json({ limit: "500kb" }));
+app.use(express.urlencoded({ extended: true, limit: "500kb" }));
+app.use(cookieParser());
+
+// Routes
 import authRoutes from './routes/auth.js';
 import postRoutes from './routes/posts.js';
 
-
-// routes declaration
 app.use('/', authRoutes);
 app.use('/', postRoutes);
 
-export {app}
+export { app };

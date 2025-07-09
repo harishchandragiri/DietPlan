@@ -8,14 +8,14 @@ import verifyUser from '../middleware/authMiddleware.js';
 const router = express.Router();
 
 // Home or dashboard
-// router.get('/', verifyUser, (req, res) => {
-//   return res.json({ email: req.email, username: req.username });
-// });
+router.get('/', verifyUser, (req, res) => {
+  return res.json({ email: req.email, username: req.username });
+});
 
 //Register
 router.post('/register', async (req, res) => {
   try {
-    let { username, email, password } = req.body;
+    let { username, email, password } = req.body.formData;
 
     // trim inputs
     username = username?.trim();
@@ -54,7 +54,7 @@ router.post('/register', async (req, res) => {
 
 // Login
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password } = req.body.formData;
 
   try {
     // Find user by email
