@@ -11,7 +11,8 @@ const router = express.Router();
 // Create user details collection if not exists
 router.post('/create', verifyUser, async (req, res) => {
   try {
-    const { email, age, gender, height, weight, activity_level, goal, food_allergies } = req.body;
+    const { age, gender, height, weight, activity_level, goal, food_allergies } = req.body.formData;
+    let email = req.email;
 
     // check if email already exists
     const existing = await UserProfileModel.findOne({ email });
@@ -32,7 +33,7 @@ router.post('/create', verifyUser, async (req, res) => {
       food_allergies
     });
 
-    res.json(result);
+    res.status(200).json(result);
 
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -43,7 +44,7 @@ router.post('/create', verifyUser, async (req, res) => {
 // Get all meals
 router.get('/getmeals', verifyUser, async (req, res) => {
   try {
-    const { email } = req.query;
+    let email  = req.email;
 
     if (!email) {
       return res.status(400).json({ error: 'Email is required in query parameters' });
@@ -85,7 +86,7 @@ router.post('/mealplan', verifyUser, async (req, res) => {
 // Update new meal plan
 router.put('/newmealplan', verifyUser, async (req, res) => {
   try {
-    const email = req.email; // set by verifyUser middleware
+    let email = req.email; // set by verifyUser middleware
     const { mealsByDay } = req.body;
 
     if (!Array.isArray(mealsByDay) || mealsByDay.length === 0) {
@@ -110,7 +111,7 @@ router.put('/newmealplan', verifyUser, async (req, res) => {
 // To fetch user details 
 router.get('/userdetails', verifyUser, async (req, res) => {
   try {
-    const { email } = req.query;
+     let email = req.email;
 
     if (!email) {
       return res.status(400).json({ error: 'Email is required as a query parameter' });
