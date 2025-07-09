@@ -8,23 +8,37 @@ import verifyUser from '../middleware/authMiddleware.js';
 const router = express.Router();
 
 // Create user details collection                        
+// Create user details collection if not exists
 router.post('/create', verifyUser, async (req, res) => {
   try {
+    const { email, age, gender, height, weight, activity_level, goal, food_allergies } = req.body;
+
+    // check if email already exists
+    const existing = await UserProfileModel.findOne({ email });
+
+    if (existing) {
+      return res.status(400).json({ message: 'Data already available for this email.' });
+    }
+
+    // if not, create new
     const result = await UserProfileModel.create({
-      email: req.body.email,
-      age: req.body.age,
-      gender: req.body.gender,
-      height: req.body.height,
-      weight: req.body.weight,
-      activity_level: req.body.activity_level,
-      goal: req.body.goal,
-      food_allergies: req.body.food_allergies // should be an array
+      email,
+      age,
+      gender,
+      height,
+      weight,
+      activity_level,
+      goal,
+      food_allergies
     });
+
     res.json(result);
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 // Get all meals
 router.get('/getmeals', verifyUser, async (req, res) => {
