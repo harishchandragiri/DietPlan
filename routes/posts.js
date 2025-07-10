@@ -102,7 +102,7 @@ router.post('/mealplan', verifyUser, async (req, res) => {
 router.put('/newmealplan', verifyUser, async (req, res) => {
   try {
     let email = req.email; // set by verifyUser middleware
-    const { mealsByDay } = req.body;
+    const mealsByDay = req.body.mealresponse;
 
     if (!Array.isArray(mealsByDay) || mealsByDay.length === 0) {
       return res.status(400).json({ error: 'Invalid data. mealsByDay must be a non-empty array.' });
@@ -134,7 +134,7 @@ router.get('/userdetails', verifyUser, async (req, res) => {
 
     const profiles = await UserProfileModel.find({ email });
 
-    if (!profiles.length) {
+    if (!profiles) {
       return res.status(404).json({ message: 'No profiles found for this email' });
     }
 
