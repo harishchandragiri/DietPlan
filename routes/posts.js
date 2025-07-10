@@ -11,8 +11,19 @@ const router = express.Router();
 // Create user details collection if not exists
 router.post('/create', verifyUser, async (req, res) => {
   try {
-    const { age, gender, height, weight, activity_level, goal, food_allergies } = req.body.formData;
-    let email = req.email;
+    const {
+      age,
+      gender,
+      height,
+      weight,
+      activity_level,
+      weight_goal,
+      dietary_pref,
+      target_calories,
+      allergies
+    } = req.body.profileData;
+
+    const email = req.email;
 
     // check if email already exists
     const existing = await UserProfileModel.findOne({ email });
@@ -29,8 +40,10 @@ router.post('/create', verifyUser, async (req, res) => {
       height,
       weight,
       activity_level,
-      goal,
-      food_allergies
+      weight_goal,
+      dietary_pref,
+      target_calories,
+      allergies
     });
 
     res.status(200).json(result);
@@ -39,6 +52,7 @@ router.post('/create', verifyUser, async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 
 // Get all meals
@@ -66,11 +80,12 @@ router.get('/getmeals', verifyUser, async (req, res) => {
 // POST route to save the weekly meal plan
 router.post('/mealplan', verifyUser, async (req, res) => {
   try {
-    const { email, mealsByDay } = req.body;
+    const mealsByDay = req.body.mealresponse;
+    const email = req.email;
 
     // Validation
-    if (!email || !Array.isArray(mealsByDay) || mealsByDay.length !== 7) {
-      return res.status(400).json({ error: 'Invalid data. Email and 7 meals are required.' });
+    if (!email || !Array.isArray(mealsByDay)) {
+      return res.status(400).json({ error: 'Invalid data. Email and meals are required.' });
     }
 
     const mealPlan = await WeeklyMealPlanModel.create({ email, mealsByDay });
